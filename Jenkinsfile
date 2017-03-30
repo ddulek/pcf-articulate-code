@@ -17,6 +17,6 @@ node ('git') {
       }
    }
    stage('Results') {
-      archive 'target/*.jar'
+      archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
    }   
 }
