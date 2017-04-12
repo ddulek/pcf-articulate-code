@@ -31,5 +31,6 @@ node ('git') {
        sh 'cf push articulate-djd -m 512M -i 1 -p target/articulate*jar --no-route'
        sh 'cf map-route articulate-djd cfapps.io -n djd2'
 
+      }
    }
 }
