@@ -19,4 +19,17 @@ node ('git') {
    stage('Results') {
       archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
    }   
+   stage('Deploy') {
+      wrap([$class: 'CloudFoundryCliBuildWrapper',
+      apiEndpoint: 'https://api.run.pivotal.io',
+      skipSslValidation: false,
+      cloudFoundryCliVersion: 'cfcli',
+      credentialsId: 'David-PWS',
+      organization: 'did-org',
+      space: 'development']) {
+
+       sh 'cf push articulate-djd -m 512M -i 1 -p target/articulate*jar --no-route'
+       sh 'cf map-route articulate-djd cfapps.io -n djd2'
+
+   }
 }
