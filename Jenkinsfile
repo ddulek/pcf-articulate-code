@@ -18,8 +18,10 @@ node ('git') {
    }
    stage('Results') {
       archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
-      checkpoint 'Archived'
    }   
+}
+checkpoint 'Archived'
+node('git'){
    stage('Deploy') {
       wrap([$class: 'CloudFoundryCliBuildWrapper',
       apiEndpoint: 'https://api.run.pivotal.io',
