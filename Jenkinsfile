@@ -1,3 +1,4 @@
+:q
 node ('git') {
    def mvnHome
    stage('Preparation') { // for display purposes
@@ -30,6 +31,22 @@ node ('git') {
 
        sh 'cf push articulate-djd -m 512M -i 1 -p target/articulate*jar --no-route'
        sh 'cf map-route articulate-djd cfapps.io -n djd2'
+
+      }
+   }
+   stage('Validate') {
+      input message: 'New version valid ?', ok: 'Yes'
+   }
+   stage('Cleanup') {
+      wrap([$class: 'CloudFoundryCliBuildWrapper',
+      apiEndpoint: 'https://api.run.pivotal.io',
+      skipSslValidation: false,
+      cloudFoundryCliVersion: 'cfcli',
+      credentialsId: 'David-PWS',
+      organization: 'did-org',
+      space: 'development']) {
+
+       sh 'cf stop djd2'
 
       }
    }
