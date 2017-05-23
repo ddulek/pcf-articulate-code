@@ -18,6 +18,7 @@ node ('git') {
    }
    stage('Results') {
       archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+      checkpoint 'Archived'
    }   
    stage('Deploy') {
       wrap([$class: 'CloudFoundryCliBuildWrapper',
