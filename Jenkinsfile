@@ -1,3 +1,8 @@
+def org = 'djd-org'
+def space = 'development'
+def blue = 'demo'
+def green = 'djd2'
+
 node ('git') {
    def mvnHome
    stage('Preparation') { // for display purposes
@@ -28,11 +33,11 @@ node('git'){
       skipSslValidation: false,
       cloudFoundryCliVersion: 'cfcli',
       credentialsId: 'David-PWS',
-      organization: 'did-org',
-      space: 'development']) {
+      organization: org,
+      space: space]) {
 
-       sh 'cf push articulate-djd -m 768M -i 1 -p target/articulate*jar --no-route'
-       sh 'cf map-route articulate-djd cfapps.io -n djd2'
+       sh "cf push '${blue}' -m 768M -i 1 -p target/articulate*jar --no-route"
+       sh "cf map-route '${blue}' cfapps.io -n '${green}'"
 
       }
    }
@@ -45,10 +50,10 @@ node('git'){
       skipSslValidation: false,
       cloudFoundryCliVersion: 'cfcli',
       credentialsId: 'David-PWS',
-      organization: 'did-org',
-      space: 'development']) {
+      organization: org,
+      space: space]) {
 
-       sh 'cf stop djd2'
+       sh "cf stop '${green}'"
 
       }
    }
