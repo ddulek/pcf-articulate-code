@@ -42,12 +42,32 @@ node('git'){
       }
    }
    stage('Validate') {
+      wrap([$class: 'CloudFoundryCliBuildWrapper',
+      apiEndpoint: 'https://api.run.pivotal.io',
+      skipSslValidation: false,
+      cloudFoundryCliVersion: 'cfcli',
+      credentialsId: 'David-PWS',
+      organization: org,
+      space: space]) {
+
       input message: 'New version valid ?', ok: 'Yes'
       sh "cf map-route '${blue}' cfapps.io -n '${route}'"
+
+      }
    }
    stage('Verify') {
+      wrap([$class: 'CloudFoundryCliBuildWrapper',
+      apiEndpoint: 'https://api.run.pivotal.io',
+      skipSslValidation: false,
+      cloudFoundryCliVersion: 'cfcli',
+      credentialsId: 'David-PWS',
+      organization: org,
+      space: space]) {
+
       input message: 'New version working on main URL ?', ok: 'Yes'
       sh "cf unmap-route '${green}' cfapps.io -n '${route}'"
+
+      }
    }
    stage('Cleanup') {
       wrap([$class: 'CloudFoundryCliBuildWrapper',
