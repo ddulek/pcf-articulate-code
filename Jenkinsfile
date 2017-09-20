@@ -1,7 +1,8 @@
 def org = 'djd-org'
 def space = 'development'
-def blue = 'demo'
-def green = 'djd2'
+def blue = 'djd-blue'
+def green = 'djd-green'
+def route = 'djd2'
 
 node ('git') {
    def mvnHome
@@ -36,13 +37,17 @@ node('git'){
       organization: org,
       space: space]) {
 
-       sh "cf push '${blue}' -m 768M -i 1 -p target/articulate*jar --no-route"
-       sh "cf map-route '${blue}' cfapps.io -n '${green}'"
+       sh "cf push '${blue}' -m 768M -i 1 -p target/articulate*jar"
 
       }
    }
    stage('Validate') {
       input message: 'New version valid ?', ok: 'Yes'
+      sh "cf map-route '${blue}' cfapps.io -n '${route}'"
+   }
+   stage('Verify') {
+      input message: 'New version working on main URL ?', ok: 'Yes'
+      sh "cf unmap-route '${green}' cfapps.io -n '${route}'"
    }
    stage('Cleanup') {
       wrap([$class: 'CloudFoundryCliBuildWrapper',
@@ -53,7 +58,8 @@ node('git'){
       organization: org,
       space: space]) {
 
-       sh "cf stop '${green}'"
+      input message: 'Stop old verion ?', ok: 'Yes'
+      sh "cf stop '${green}'"
 
       }
    }
